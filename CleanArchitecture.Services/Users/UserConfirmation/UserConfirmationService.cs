@@ -6,13 +6,34 @@ namespace CleanArchitecture.Services.Users.UserConfirmation
 {
     public class UserConfirmationService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserRegistrationTokenRepository _userRegistrationTokenRepository;
+        private readonly IUserRegistrationTokenRepository userRegistrationTokenRepository;
 
-        public UserConfirmationService(IUserRepository userRepository, IUserRegistrationTokenRepository userRegistrationTokenRepository)
+        public UserConfirmationService(IUserRegistrationTokenRepository userRegistrationTokenRepository)
         {
-            _userRepository = userRepository;
-            _userRegistrationTokenRepository = userRegistrationTokenRepository;
+            this.userRegistrationTokenRepository = userRegistrationTokenRepository;
+        }
+
+        /// <summary>
+        /// Creates  user registration token.
+        /// </summary>
+        /// <param name="user">
+        /// An user.
+        /// </param>
+        /// <returns>
+        /// Returns a registration token.
+        /// </returns>
+        public UserRegistrationToken CreateRegistrationToken(User user)
+        {
+            var token = new UserRegistrationToken()
+            {
+                Token = Guid.NewGuid().ToString(),
+                Confirmed = false,
+                UserId = user.UserId
+            };
+
+            userRegistrationTokenRepository.Create(token);
+
+            return token;
         }
 
         /// <summary>
@@ -32,7 +53,7 @@ namespace CleanArchitecture.Services.Users.UserConfirmation
             if (token == null)
                 throw new ArgumentNullException(nameof(token));
 
-            UserRegistrationToken registration = _userRegistrationTokenRepository.GetByToken(token);
+            UserRegistrationToken registration = userRegistrationTokenRepository.GetByToken(token);
 
             if (registration == null)
                 throw new UserRegistrationNotFoundException(token);
@@ -41,12 +62,6 @@ namespace CleanArchitecture.Services.Users.UserConfirmation
                 throw new UserRegistrationConfirmedException(token);
 
             registration.Confirmed = true;
-
-            var user = _userRepository.GetById(registration.UserId);
-
-            user.Active = true;
-
-            _userRepository.Save(user);
         }
 
         /// <summary>
@@ -63,7 +78,7 @@ namespace CleanArchitecture.Services.Users.UserConfirmation
             if (token == null)
                 throw new ArgumentNullException(nameof(token));
 
-            UserRegistrationToken registration = _userRegistrationTokenRepository.GetByToken(token);
+            UserRegistrationToken registration = userRegistrationTokenRepository.GetByToken(token);
 
             if (registration == null)
                 throw new UserRegistrationNotFoundException(token);

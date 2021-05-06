@@ -1,21 +1,22 @@
 ﻿using CleanArchitecture.Controllers;
 using CleanArchitecture.DataAccess.Users;
 using CleanArchitecture.Entities;
+using CleanArchitecture.Services.Users.UserConfirmation;
 using System;
 
 namespace CleanArchitecture.Services.Users.UserRegistration
 {
-    public class UserRegistrationService
+    public sealed class UserRegistrationService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserRegistrationTokenRepository _userRegistrationTokenRepository;
-        private readonly IUserRegistrationEmail _userRegistrationEmail;
+        private readonly IUserRepository userRepository;
+        private readonly IUserRegistrationEmail userRegistrationEmail;
+        private readonly UserConfirmationService userConfirmationService;
 
-        public UserRegistrationService(IUserRepository userRepository, IUserRegistrationTokenRepository userRegistrationTokenRepository, IUserRegistrationEmail userRegistrationEmail)
+        public UserRegistrationService(IUserRepository userRepository, IUserRegistrationEmail userRegistrationEmail, UserConfirmationService userConfirmationService)
         {
-            _userRepository = userRepository;
-            _userRegistrationTokenRepository = userRegistrationTokenRepository;
-            _userRegistrationEmail = userRegistrationEmail;
+            this.userRepository = userRepository;
+            this.userRegistrationEmail = userRegistrationEmail;
+            this.userConfirmationService = userConfirmationService;
         }
 
         /// <summary>
@@ -55,22 +56,14 @@ namespace CleanArchitecture.Services.Users.UserRegistration
                 UserId = Guid.NewGuid().ToString(),
                 Email = dto.Email,
                 Name = dto.Name,
-                Password = dto.Password,
-                Active = false
+                Password = dto.Password
             };
 
-            _userRepository.Save(user);
+            userRepository.Save(user);
 
-            var token = new UserRegistrationToken()
-            {
-                Token = Guid.NewGuid().ToString(),
-                Confirmed = false,
-                UserId = user.UserId
-            };
+            var token = userConfirmationService.CreateRegistrationToken(user);
 
-            _userRegistrationTokenRepository.Create(token);
-
-            _userRegistrationEmail.SendUserRegistrationEmail(user.Email, user.Name, token.Token);
+            userRegistrationEmail.SendUserRegistrationEmail(user.Email, user.Name, token.Token);
 
             return token;
         }
@@ -83,7 +76,7 @@ namespace CleanArchitecture.Services.Users.UserRegistration
         /// </param>
         public bool IsRegistred(string email)
         {
-            return _userRepository.Contains(email);
+            return userRepository.Contains(email);
         }
     }
 }

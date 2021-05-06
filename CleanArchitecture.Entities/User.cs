@@ -23,10 +23,5 @@ namespace CleanArchitecture.Entities
         /// User's password.
         /// </summary>
         public string Password { get; set; }
-
-        /// <summary>
-        /// True if the user confirms the registration token.
-        /// </summary>
-        public bool Active { get; set; }
     }
 }

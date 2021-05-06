@@ -22,7 +22,6 @@ namespace CleanArchitecture.DataAccess.Users
                 UserId = dto.UserId,
                 Email = dto.Email,
                 Name = dto.Name,
-                Active = dto.Active,
                 Password = dto.Password
             };
 
@@ -36,8 +35,7 @@ namespace CleanArchitecture.DataAccess.Users
                 UserId = user.UserId,
                 Email = user.Email,
                 Name = user.Name,
-                Password = user.Password,
-                Active = user.Active
+                Password = user.Password
             };
 
             if (data.ContainsKey(user.UserId))
