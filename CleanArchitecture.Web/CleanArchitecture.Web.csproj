@@ -4,4 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CleanArchitecture.Controllers.DependencyInjection\CleanArchitecture.Controllers.DependencyInjection.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.DataAccess.MongoDB\CleanArchitecture.DataAccess.MongoDB.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Services.DependencyInjection\CleanArchitecture.Services.DependencyInjection.csproj" />
+  </ItemGroup>
+
 </Project>

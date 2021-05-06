@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CleanArchitecture.Services.Users
+namespace CleanArchitecture.DataAccess.Users
 {
     /// <summary>
     /// User not found.

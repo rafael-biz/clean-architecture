@@ -14,7 +14,11 @@ namespace CleanArchitecture.Web
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCleanArchitectureServices();
 
+            services.AddCleanArchitectureControllers();
+
+            services.AddCleanArchitectureMongoDB();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

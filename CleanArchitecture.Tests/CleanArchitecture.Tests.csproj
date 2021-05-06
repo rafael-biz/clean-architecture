@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CleanArchitecture.Controllers.EmailSender\CleanArchitecture.Controllers.EmailSender.csproj" />
-    <ProjectReference Include="..\CleanArchitecture.DataAccess\CleanArchitecture.DataAccess.csproj" />
-    <ProjectReference Include="..\CleanArchitecture.Entities\CleanArchitecture.Entities.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Mocks\CleanArchitecture.Mocks.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Services.DependencyInjection\CleanArchitecture.Services.DependencyInjection.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.Services\CleanArchitecture.Services.csproj" />
   </ItemGroup>
 
 </Project>

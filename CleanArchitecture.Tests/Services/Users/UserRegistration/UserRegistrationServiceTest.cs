@@ -1,6 +1,5 @@
 using System;
-using CleanArchitecture.Controllers.EmailSender;
-using CleanArchitecture.DataAccess.Users;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CleanArchitecture.Services.Users.UserRegistration
@@ -8,20 +7,23 @@ namespace CleanArchitecture.Services.Users.UserRegistration
     [TestClass]
     public class UserRegistrationServiceTest
     {
-        private UserRegistrationService _service;
+        private UserRegistrationService userRegistrationService;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var userRepository = new UserRepository();
-            var userRegistrationTokenRepository = new UserRegistrationTokenRepository();
-            var userRegistrationEmailSender = new UserRegistrationEmailSender();
+            var services = new ServiceCollection();
 
-            _service = new UserRegistrationService(userRepository, userRegistrationTokenRepository, userRegistrationEmailSender);
+            services.AddCleanArchitectureServices();
+            services.AddCleanArchitectureMocks();
+
+            var provider = services.BuildServiceProvider();
+
+            userRegistrationService = provider.GetRequiredService<UserRegistrationService>();
         }
 
         [TestMethod]
-        [Description("Deve permitir o registro de usuários.")]
+        [Description("It must register an user.")]
         public void TestRegistration()
         {
             var dto = new UserRegistrationDTO()
@@ -31,42 +33,44 @@ namespace CleanArchitecture.Services.Users.UserRegistration
                 Password = "123456",
             };
 
-            var token = _service.RegisterUser(dto);
+            Assert.IsFalse(userRegistrationService.IsRegistred(dto.Email));
 
-            Assert.IsNotNull(token, "O token de registro do usuário é inválido.");
+            userRegistrationService.RegisterUser(dto);
+
+            Assert.IsTrue(userRegistrationService.IsRegistred(dto.Email));
         }
 
         [TestMethod]
-        [Description("Deve impedir o registro de dois usuários com o mesmo e-mail.")]
+        [Description("It must prevent registering two users with the same email.")]
         public void TestDuplicatedRegistration()
         {
-            _service.RegisterUser(new UserRegistrationDTO()
+            userRegistrationService.RegisterUser(new UserRegistrationDTO()
             {
-                Name = "Fulano",
-                Email = "fulano@gmail.com",
+                Name = "John",
+                Email = "john@gmail.com",
                 Password = "123456",
             });
 
             Assert.ThrowsException<UserEmailDuplicatedException>(() =>
             {
-                _service.RegisterUser(new UserRegistrationDTO()
+                userRegistrationService.RegisterUser(new UserRegistrationDTO()
                 {
-                    Name = "Biltrano",
-                    Email = "fulano@gmail.com",
+                    Name = "Mary",
+                    Email = "john@gmail.com",
                     Password = "999999",
                 });
             });
         }
 
         [TestMethod]
-        [Description("Deve impedir o registro de um usuário sem um e-mail.")]
+        [Description("It must prevent a user from registering without an email.")]
         public void TestEmailRequired()
         {
             Assert.ThrowsException<UserEmailRequiredException>(() =>
             {
-                _service.RegisterUser(new UserRegistrationDTO()
+                userRegistrationService.RegisterUser(new UserRegistrationDTO()
                 {
-                    Name = "Fulano",
+                    Name = "Mary",
                     Email = null,
                     Password = "999999",
                 });
@@ -74,14 +78,14 @@ namespace CleanArchitecture.Services.Users.UserRegistration
         }
 
         [TestMethod]
-        [Description("Deve impedir o registro de um usuário sem um e-mail válido.")]
+        [Description("It must prevent a user from registering without a valid email.")]
         public void TestEmailInvalid()
         {
             Assert.ThrowsException<UserEmailInvalidException>(() =>
             {
-                _service.RegisterUser(new UserRegistrationDTO()
+                userRegistrationService.RegisterUser(new UserRegistrationDTO()
                 {
-                    Name = "Fulano",
+                    Name = "John",
                     Email = "aaaaaaa",
                     Password = "999999",
                 });

@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CleanArchitecture.Controllers\CleanArchitecture.Controllers.csproj" />
+    <ProjectReference Include="..\CleanArchitecture.DataAccess\CleanArchitecture.DataAccess.csproj" />
     <ProjectReference Include="..\CleanArchitecture.Entities\CleanArchitecture.Entities.csproj" />
   </ItemGroup>
 

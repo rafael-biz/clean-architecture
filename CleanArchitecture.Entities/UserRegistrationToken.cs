@@ -15,8 +15,8 @@ namespace CleanArchitecture.Entities
         public string UserId { get; set; }
 
         /// <summary>
-        /// True if the token still active.
+        /// Returns true if the registration token has been confirmed.
         /// </summary>
-        public bool Active { get; set; }
+        public bool Confirmed { get; set; }
     }
 }

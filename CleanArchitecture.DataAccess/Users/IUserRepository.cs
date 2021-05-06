@@ -1,6 +1,6 @@
 ﻿using CleanArchitecture.Entities;
 
-namespace CleanArchitecture.Services.Users
+namespace CleanArchitecture.DataAccess.Users
 {
     public interface IUserRepository
     {

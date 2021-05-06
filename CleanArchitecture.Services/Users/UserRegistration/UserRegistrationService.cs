@@ -1,4 +1,6 @@
-﻿using CleanArchitecture.Entities;
+﻿using CleanArchitecture.Controllers;
+using CleanArchitecture.DataAccess.Users;
+using CleanArchitecture.Entities;
 using System;
 
 namespace CleanArchitecture.Services.Users.UserRegistration
@@ -45,7 +47,7 @@ namespace CleanArchitecture.Services.Users.UserRegistration
             if (!dto.Email.Contains("@"))
                 throw new UserEmailInvalidException(dto.Email);
 
-            if (_userRepository.Contains(dto.Email))
+            if (IsRegistred(dto.Email))
                 throw new UserEmailDuplicatedException(dto.Email);
 
             var user = new User()
@@ -62,7 +64,7 @@ namespace CleanArchitecture.Services.Users.UserRegistration
             var token = new UserRegistrationToken()
             {
                 Token = Guid.NewGuid().ToString(),
-                Active = true,
+                Confirmed = false,
                 UserId = user.UserId
             };
 
@@ -71,6 +73,17 @@ namespace CleanArchitecture.Services.Users.UserRegistration
             _userRegistrationEmail.SendUserRegistrationEmail(user.Email, user.Name, token.Token);
 
             return token;
+        }
+
+        /// <summary>
+        /// Returns true if the specified e-mail is registred.
+        /// </summary>
+        /// <param name="email">
+        /// User's email.
+        /// </param>
+        public bool IsRegistred(string email)
+        {
+            return _userRepository.Contains(email);
         }
     }
 }

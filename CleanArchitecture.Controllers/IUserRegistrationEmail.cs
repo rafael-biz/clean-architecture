@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CleanArchitecture.Services.Users.UserRegistration
+namespace CleanArchitecture.Controllers
 {
     public interface IUserRegistrationEmail
     {
